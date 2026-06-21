@@ -1,4 +1,5 @@
-﻿using IntegrityInMicrosoftGraph.Interfaces;
+﻿using IntegrityInMicrosoftGraph.Enums;
+using IntegrityInMicrosoftGraph.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,7 +20,7 @@ namespace IntegrityInMicrosoftGraph.Core
             _graph = graph;
         }
 
-        public async Task Run(int sizeKb, string fileType)
+        public async Task Run(int sizeKb, FileType fileType)
         {
             string original = "original.bin";
             string downloaded = "downloaded.bin";

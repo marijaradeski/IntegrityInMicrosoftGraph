@@ -1,4 +1,5 @@
-﻿using IntegrityInMicrosoftGraph.Interfaces;
+﻿using IntegrityInMicrosoftGraph.Enums;
+using IntegrityInMicrosoftGraph.Interfaces;
 using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ namespace IntegrityInMicrosoftGraph.Services
 {
     public class FileService : IFileService
     {
-        public void CreateFile(string path, int sizeKb, string fileType)
+        public void CreateFile(string path, int sizeKb, FileType fileType)
         {
             var data = new byte[sizeKb * 1024];
 
@@ -22,14 +23,14 @@ namespace IntegrityInMicrosoftGraph.Services
             File.WriteAllBytes(path, data);
         }
 
-        private byte[] GetHeader(string fileType)
+        private byte[] GetHeader(FileType fileType)
         {
-            return fileType.ToLower() switch
+            return fileType switch
             {
-                "jpg" => new byte[] { 0xFF, 0xD8, 0xFF },
-                "png" => new byte[] { 0x89, 0x50, 0x4E, 0x47 },
-                "txt" => Encoding.UTF8.GetBytes("TEXT FILE\n"),
-                "zip" => new byte[] { 0x50, 0x4B, 0x03, 0x04 },
+                FileType.Jpg => new byte[] { 0xFF, 0xD8, 0xFF },
+                FileType.Png => new byte[] { 0x89, 0x50, 0x4E, 0x47 },
+                FileType.Txt => Encoding.UTF8.GetBytes("TEXT FILE\n"),
+                FileType.Zip => new byte[] { 0x50, 0x4B, 0x03, 0x04 },
                 _ => Array.Empty<byte>()
             };
         }
