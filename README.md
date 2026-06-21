@@ -3,7 +3,6 @@
 A small research-oriented .NET 9 console application that experiments with file transfer performance and integrity validation using Microsoft Graph (OneDrive).
 
 🧠 Overview
-
 This project was built as a personal experiment to better understand how file uploads and downloads behave in real cloud storage scenarios.
 
 Instead of just using OneDrive as storage, the idea was to treat it like a test environment for benchmarking and integrity validation.
@@ -15,8 +14,8 @@ uploads it to OneDrive via Microsoft Graph
 downloads it back
 compares both versions using SHA-256 hashing
 measures upload/download performance
-🎯 Goal of the project
 
+🎯 Goal of the project
 The main focus is not production usage, but measurement and observation:
 
 How does file size affect upload speed?
@@ -36,8 +35,8 @@ File is downloaded back to local disk
 SHA-256 hash is calculated again
 Both hashes are compared
 Upload/download time and speed are measured
-🧱 Architecture
 
+🧱 Architecture
 The project follows a simple layered structure:
 
 UI Layer
@@ -55,8 +54,8 @@ FileComparer → compares file content
 Authentication
 GraphAuthenticator
 Uses MSAL Device Code Flow for personal Microsoft accounts
-🔐 Integrity verification
 
+🔐 Integrity verification
 Integrity is checked using SHA-256 hashing:
 
 Hash before upload = original state
@@ -89,6 +88,7 @@ Microsoft Graph SDK
 MSAL (Device Code Flow authentication)
 SHA-256 cryptography (System.Security.Cryptography)
 Manual dependency injection (no external DI container)
+
 ▶️ Running the project
 Build the solution
 Run the console app
@@ -97,8 +97,8 @@ Enter:
 file size
 file type
 Wait for results
-📁 Output behavior
 
+📁 Output behavior
 Files are stored in OneDrive under a test folder:
 
 /test/original.bin
@@ -110,8 +110,8 @@ This project is not optimized for production workloads
 It is designed for experimentation and learning
 Network speed and Microsoft Graph latency affect results
 Binary files are used for consistent benchmarking
-📈 Possible improvements
 
+📈 Possible improvements
 Some ideas for future expansion:
 
 Export results to CSV for analysis
@@ -119,8 +119,8 @@ Run batch experiments automatically (e.g. 100 runs per file size)
 Add charts for performance visualization
 Add retry logic for unstable network conditions
 Compare OneDrive vs other storage providers
-🧠 Personal takeaway
 
+🧠 Personal takeaway
 The most interesting part of this project was realizing how much real-world variance exists in something as simple as file upload speed. Even small changes in file size or network conditions can significantly affect results.
 
 It also made clear how important it is to separate:
