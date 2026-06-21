@@ -1,9 +1,12 @@
-﻿var basePath = Directory.GetCurrentDirectory();
-var filePath = Path.Combine(basePath, "testFile");
+﻿using IntegrityInMicrosoftGraph.Security;
+using IntegrityInMicrosoftGraph.Services;
 
-File.WriteAllBytes(filePath, new byte[1024]);
+var file = new FileService();
+var basePath = file.CreateFile("testFile", 1024);
 
-var newHashService = new IntegrityInMicrosoftGraph.Security.HashService();
-newHashService.ComputeHash(filePath);
+File.WriteAllBytes(basePath, new byte[1024]);
 
-Console.WriteLine(newHashService.ComputeHash(filePath));
+var newHashService = new HashService();
+newHashService.ComputeHash(basePath);
+
+Console.WriteLine(newHashService.ComputeHash(basePath));
