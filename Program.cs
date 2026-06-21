@@ -21,11 +21,13 @@ class Program
         IFileService fileService = new FileService();
         IHashService hashService = new HashService();
         IGraphService graphService = new GraphService(client);
+        ICalculator calculator = new Calculator();
+        IFileComparer comparer = new FileComparer();
 
         // RUN EXPERIMENT
-        var runner = new Runner(fileService, hashService, graphService);
+        var runner = new Runner(fileService, hashService, graphService, calculator, comparer);
 
-        var menu = new ConsoleBar(runner);
+        var menu = new ConsoleBar(runner, calculator);
 
         await menu.StartAsync();
     }
