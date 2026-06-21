@@ -2,7 +2,6 @@
 using IntegrityInMicrosoftGraph.ConsoleLogic;
 using IntegrityInMicrosoftGraph.Core;
 using IntegrityInMicrosoftGraph.Interfaces;
-using IntegrityInMicrosoftGraph.Security;
 using IntegrityInMicrosoftGraph.Services;
 using Microsoft.Graph;
 
