@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("IntegrityInMicrosoftGraph")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+32ed49a37b4d1cd16092852769a2b4913fc45d24")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8ed9dff08ffb1713281ba8215fbe90f0d9fbd10e")]
 [assembly: System.Reflection.AssemblyProductAttribute("IntegrityInMicrosoftGraph")]
 [assembly: System.Reflection.AssemblyTitleAttribute("IntegrityInMicrosoftGraph")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
