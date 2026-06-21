@@ -138,3 +138,7 @@ It also made clear how important it is to separate:
 experiment logic
 data collection
 and presentation layer
+
+⚠️ Biggest Challange
+
+The most difficult part of this project was setting up the Azure app registration and getting the authentication to work properly. Because I used a personal Microsoft account, I ran into several configuration issues. Understanding how to properly connect everything with Microsoft Graph and resolve authentication problems took most of my time.
