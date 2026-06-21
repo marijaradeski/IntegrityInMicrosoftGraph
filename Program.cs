@@ -1,11 +1,10 @@
 ﻿using IntegrityInMicrosoftGraph.Authentication;
+using IntegrityInMicrosoftGraph.ConsoleLogic;
 using IntegrityInMicrosoftGraph.Core;
-using IntegrityInMicrosoftGraph.Enums;
 using IntegrityInMicrosoftGraph.Interfaces;
 using IntegrityInMicrosoftGraph.Security;
 using IntegrityInMicrosoftGraph.Services;
 using Microsoft.Graph;
-using Microsoft.VisualBasic.FileIO;
 
 class Program
 {
@@ -27,10 +26,8 @@ class Program
         // RUN EXPERIMENT
         var runner = new Runner(fileService, hashService, graphService);
 
-        await runner.Run(10, FileType.Txt);
-        await runner.Run(1024, FileType.Txt);
-        await runner.Run(100, FileType.Png);
-        await runner.Run(1024, FileType.Jpg);
-        await runner.Run(1024, FileType.Zip);
+        var menu = new ConsoleBar(runner);
+
+        await menu.StartAsync();
     }
 }
