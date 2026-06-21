@@ -50,3 +50,4 @@ C:\Users\user\IntegrityInMicrosoftGraph\obj\Debug\net10.0\refint\IntegrityInMicr
 C:\Users\user\IntegrityInMicrosoftGraph\obj\Debug\net10.0\IntegrityInMicrosoftGraph.pdb
 C:\Users\user\IntegrityInMicrosoftGraph\obj\Debug\net10.0\IntegrityInMicrosoftGraph.genruntimeconfig.cache
 C:\Users\user\IntegrityInMicrosoftGraph\obj\Debug\net10.0\ref\IntegrityInMicrosoftGraph.dll
+C:\Users\user\IntegrityInMicrosoftGraph\obj\Debug\net10.0\IntegrityInMicrosoftGraph.sourcelink.json
