@@ -1,12 +1,34 @@
-﻿using IntegrityInMicrosoftGraph.Security;
+﻿using IntegrityInMicrosoftGraph.Authentication;
+using IntegrityInMicrosoftGraph.Core;
+using IntegrityInMicrosoftGraph.Interfaces;
+using IntegrityInMicrosoftGraph.Security;
 using IntegrityInMicrosoftGraph.Services;
+using Microsoft.Graph;
 
-var file = new FileService();
-var basePath = file.CreateFile("testFile", 1024);
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        Console.WriteLine("Integrity In Microsoft Graph App");
 
-File.WriteAllBytes(basePath, new byte[1024]);
+        // AUTH
+        var authProvider = new GraphAuthenticator();
 
-var newHashService = new HashService();
-newHashService.ComputeHash(basePath);
+        // GRAPH CLIENT
+        var client = new GraphServiceClient(authProvider);
 
-Console.WriteLine(newHashService.ComputeHash(basePath));
+        // SERVICES
+        IFileService fileService = new FileService();
+        IHashService hashService = new HashService();
+        IGraphService graphService = new GraphService(client);
+
+        // RUN EXPERIMENT
+        var runner = new Runner(fileService, hashService, graphService);
+
+        await runner.Run(10, "txt");
+        await runner.Run(1024, "txt");
+        await runner.Run(100, "png");
+        await runner.Run(1024, "jpg");
+        await runner.Run(1024, "zip");
+    }
+}

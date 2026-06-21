@@ -1,11 +1,12 @@
-﻿using System;
+﻿using IntegrityInMicrosoftGraph.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace IntegrityInMicrosoftGraph.Security
 {
-    public class HashService
+    public class HashService : IHashService
     {
         public string ComputeHash(string filePath)
         {
