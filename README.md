@@ -11,9 +11,13 @@ Instead of just using OneDrive as storage, the idea was to treat it like a test 
 Each run of the application:
 
 generates a file locally
+
 uploads it to OneDrive via Microsoft Graph
+
 downloads it back
+
 compares both versions using SHA-256 hashing
+
 measures upload/download performance
 
 🎯 Goal of the project
@@ -30,13 +34,21 @@ The application is structured like a small “lab tool” for running repeatable
 ⚙️ How it works
 
 User enters file size (KB)
+
 User selects file type (txt, jpg, png, zip, etc.)
+
 The system generates a random file locally
+
 SHA-256 hash is calculated (baseline)
+
 File is uploaded to OneDrive using Microsoft Graph
+
 File is downloaded back to local disk
+
 SHA-256 hash is calculated again
+
 Both hashes are compared
+
 Upload/download time and speed are measured
 
 🧱 Architecture
@@ -44,19 +56,33 @@ Upload/download time and speed are measured
 The project follows a simple layered structure:
 
 UI Layer
+
 ConsoleMenu
+
 Handles user input and output formatting
+
 Core Layer
+
 Runner
+
 Orchestrates the experiment flow
+
 Services Layer
+
 FileService → generates test files
+
 GraphService → handles Microsoft Graph upload/download
+
 HashService → computes SHA-256 hashes
-BenchmarkCalculator → calculates transfer speed
+
+Calculator → calculates transfer speed
+
 FileComparer → compares file content
+
 Authentication
+
 GraphAuthenticator
+
 Uses MSAL Device Code Flow for personal Microsoft accounts
 
 🔐 Integrity verification
@@ -64,6 +90,7 @@ Uses MSAL Device Code Flow for personal Microsoft accounts
 Integrity is checked using SHA-256 hashing:
 
 Hash before upload = original state
+
 Hash after download = received state
 
 If both match, the file is considered unchanged.
@@ -75,11 +102,17 @@ If not, it indicates corruption or transfer mismatch.
 Each experiment records:
 
 Upload time (ms)
+
 Download time (ms)
+
 File size (bytes / KB)
+
 Upload speed (MB/s)
+
 Download speed (MB/s)
+
 Hash match result
+
 File equality check
 
 This allows comparison between:
@@ -87,21 +120,32 @@ This allows comparison between:
 small vs large files
 different file types
 multiple repeated runs
+
 🛠 Tech stack
-.NET 9 (Console Application)
+.NET 10 (Console Application)
+
 Microsoft Graph SDK
+
 MSAL (Device Code Flow authentication)
+
 SHA-256 cryptography (System.Security.Cryptography)
+
 Manual dependency injection (no external DI container)
 
 ▶️ Running the project
 
 Build the solution
+
 Run the console app
+
 Authenticate with Microsoft account (device code flow)
+
 Enter:
+
 file size
+
 file type
+
 Wait for results
 
 📁 Output behavior
@@ -136,7 +180,9 @@ The most interesting part of this project was realizing how much real-world vari
 It also made clear how important it is to separate:
 
 experiment logic
+
 data collection
+
 and presentation layer
 
 ⚠️ Biggest Challange
