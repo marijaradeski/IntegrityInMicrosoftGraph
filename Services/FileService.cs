@@ -17,7 +17,6 @@ namespace IntegrityInMicrosoftGraph.Services
 
             byte[] header = GetHeader(fileType);
 
-            // copy header into beginning of file
             Buffer.BlockCopy(header, 0, data, 0, Math.Min(header.Length, data.Length));
 
             File.WriteAllBytes(path, data);

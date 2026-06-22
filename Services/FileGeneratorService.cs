@@ -1,4 +1,5 @@
-﻿using IntegrityInMicrosoftGraph.Interfaces;
+﻿using IntegrityInMicrosoftGraph.Enums;
+using IntegrityInMicrosoftGraph.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,19 +8,29 @@ namespace IntegrityInMicrosoftGraph.Services
 {
     public class FileGeneratorService : IFileSourceService
     {
-        public Task<string> FilePath()
+        private readonly int _sizeKb;
+        private readonly FileType _fileType;
+        private readonly IFileService _files;
+
+        private readonly string _path = "original.bin";
+
+        public FileGeneratorService(int sizeKb, FileType fileType, IFileService files)
         {
-            throw new NotImplementedException();
+            _sizeKb = sizeKb;
+            _fileType = fileType;
+            _files = files;
         }
 
-        public string GetFileType(string path)
+        public string  FilePath()
         {
-            throw new NotImplementedException();
+            _files.CreateFile(_path, _sizeKb, _fileType);
+            return _path;
         }
 
         public long GetSizeBytes(string path)
-        {
-            throw new NotImplementedException();
-        }
+            => new FileInfo(path).Length;
+
+        public string GetFileType(string path)
+            => _fileType.ToString();
     }
 }

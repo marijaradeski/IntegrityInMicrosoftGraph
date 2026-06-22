@@ -7,19 +7,20 @@ namespace IntegrityInMicrosoftGraph.Services
 {
     public class FileProviderService : IFileSourceService
     {
-        public Task<string> FilePath()
+        private readonly string _path;
+
+        public FileProviderService(string path)
         {
-            throw new NotImplementedException();
+            _path = path;
         }
 
-        public string GetFileType(string path)
-        {
-            throw new NotImplementedException();
-        }
+        public string FilePath()
+            => _path;
 
         public long GetSizeBytes(string path)
-        {
-            throw new NotImplementedException();
-        }
+            => new FileInfo(path).Length;
+
+        public string GetFileType(string path)
+            => Path.GetExtension(path);
     }
 }

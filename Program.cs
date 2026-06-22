@@ -15,17 +15,18 @@ class Program
         // GRAPH CLIENT
         var client = new GraphServiceClient(authProvider);
 
-        // SERVICES
         IFileService fileService = new FileService();
         IHashService hashService = new HashService();
         IGraphService graphService = new GraphService(client);
         ICalculator calculator = new Calculator();
         IFileComparer comparer = new FileComparer();
 
-        // RUN EXPERIMENT
-        var runner = new Runner(fileService, hashService, graphService, calculator, comparer);
-
-        var menu = new ConsoleBar(runner, calculator);
+        var menu = new ConsoleBar(
+            fileService,
+            hashService,
+            graphService,
+            calculator,
+            comparer);
 
         await menu.StartAsync();
     }

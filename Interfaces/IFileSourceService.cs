@@ -6,7 +6,7 @@ namespace IntegrityInMicrosoftGraph.Interfaces
 {
     public interface IFileSourceService
     {
-        Task<string> FilePath();
+        string FilePath();
         long GetSizeBytes(string path);
         string GetFileType(string path);
     }

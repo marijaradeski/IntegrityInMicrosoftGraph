@@ -16,7 +16,7 @@ namespace IntegrityInMicrosoftGraph.Authentication
         {
         "Files.ReadWrite.All",
         "User.Read"
-    };
+        };
 
         private readonly IPublicClientApplication _app;
 

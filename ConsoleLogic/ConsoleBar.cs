@@ -2,6 +2,7 @@
 using IntegrityInMicrosoftGraph.Enums;
 using IntegrityInMicrosoftGraph.Interfaces;
 using IntegrityInMicrosoftGraph.Model;
+using IntegrityInMicrosoftGraph.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,38 +11,106 @@ namespace IntegrityInMicrosoftGraph.ConsoleLogic
 {
     public class ConsoleBar
     {
-        private readonly Runner _runner;
+        private readonly IFileService _fileService;
+        private readonly IHashService _hash;
+        private readonly IGraphService _graph;
         private readonly ICalculator _calculator;
+        private readonly IFileComparer _comparer;
 
-        public ConsoleBar(Runner runner, ICalculator calculator)
+        public ConsoleBar(
+            IFileService fileService,
+            IHashService hash,
+            IGraphService graph,
+            ICalculator calculator,
+            IFileComparer comparer)
         {
-            _runner = runner;
+            _fileService = fileService;
+            _hash = hash;
+            _graph = graph;
             _calculator = calculator;
+            _comparer = comparer;
         }
 
         public async Task StartAsync()
         {
             Console.WriteLine("Integrity Microsoft Graph Application");
 
-            //var sizeKb = ReadFileSize();
-            var path = ReadFileType();
+            Console.WriteLine("Choose mode:");
+            Console.WriteLine("1 - Use existing file on your PC");
+            Console.WriteLine("2 - Create test data by inserting file type and size");
 
-            var result = await _runner.Run(path);
+            var mode = Console.ReadLine();
+
+            IFileSourceService source;
+
+            if (mode == "1")
+            {
+                var path = ReadFilePath();
+                source = new FileProviderService(path);
+            }
+            else
+            {
+                var sizeKb = ReadFileSize();
+                var fileType = ReadFileType();
+                source = new FileGeneratorService(sizeKb, fileType, _fileService);
+            }
+
+            var runner = new Runner(source, _hash, _graph, _calculator, _comparer);
+
+            var result = await runner.RunAsync();
             PrintResults(result);
         }
 
-        private string ReadFileType()
+        private int ReadFileSize()
         {
             while (true)
-             {
-                Console.Write("Enter full file path: ");
+            {
+                Console.Write("Enter file size (KB): ");
+
+                if (int.TryParse(Console.ReadLine(), out int sizeKb) && sizeKb > 0)
+                {
+                    return sizeKb;
+                }
+
+                Console.WriteLine("Please enter a valid positive number.");
+            }
+        }
+
+        private string ReadFilePath()
+        {
+            while (true)
+            {
+                Console.Write("Enter file path: ");
                 var path = Console.ReadLine();
 
                 if (!string.IsNullOrWhiteSpace(path) && File.Exists(path))
                     return path;
 
-                Console.WriteLine("File not found. Try again.");
-             }
+                Console.WriteLine("Invalid file path.");
+
+            }
+        }
+
+        private FileType ReadFileType()
+        {
+            while (true)
+            {
+                Console.WriteLine("File types:");
+
+                foreach (var type in Enum.GetValues<FileType>())
+                {
+                    Console.WriteLine($"- {type}");
+                }
+
+                Console.Write("Select file type: ");
+
+                if (Enum.TryParse<FileType>(Console.ReadLine(), true, out var fileType))
+                {
+                    return fileType;
+                }
+
+                Console.WriteLine("Invalid file type.");
+            }
         }
 
         private void PrintResults(FileTransferResult result)

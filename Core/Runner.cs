@@ -10,88 +10,71 @@ namespace IntegrityInMicrosoftGraph.Core
 {
     public class Runner
     {
-        private readonly IFileService _files;
+        private readonly IFileSourceService _source;
         private readonly IHashService _hash;
         private readonly IGraphService _graph;
         private readonly ICalculator _calculator;
         private readonly IFileComparer _comparer;
 
-        public Runner(IFileService files, IHashService hash, IGraphService graph, ICalculator calculator, IFileComparer comparer)
+        public Runner(
+            IFileSourceService source,
+            IHashService hash,
+            IGraphService graph,
+            ICalculator calculator,
+            IFileComparer comparer)
         {
-            _files = files;
+            _source = source;
             _hash = hash;
             _graph = graph;
             _calculator = calculator;
             _comparer = comparer;
         }
 
-        public async Task<FileTransferResult> Run(string filePath, int size)
+        public async Task<FileTransferResult> RunAsync()
         {
-            string original = "original.bin";
-            string downloaded = "downloaded.bin";
-            string fileName = Path.GetFileName(filePath);
+            string localPath = _source.FilePath();
+            string fileName = Path.GetFileName(localPath);
             string remotePath = $"test/{fileName}";
+            string downloaded = "downloaded.bin";
 
-            //// 1. CREATE FILE
-            _files.CreateFile(original, sizeKb, fileType);
+            long sizeBytes = _source.GetSizeBytes(localPath);
 
-            long fileSizeBytes = new FileInfo(filePath).Length;
+            var hash1 = _hash.ComputeHash(localPath);
 
-            // 2. HASH BEFORE UPLOAD
-            var hash1 = _hash.ComputeHash(filePath);
+            var upload = await MeasureUploadDownloadAsync(() =>
+                _graph.UploadAsync(localPath, remotePath));
 
-            // 3. UPLOAD
-            var upload = await MeasureAsync(() =>
-                _graph.UploadAsync(filePath, remotePath));
-
-            // 4. DOWNLOAD
-            var download = await MeasureAsync(() =>
+            var download = await MeasureUploadDownloadAsync(() =>
                 _graph.DownloadAsync(remotePath, downloaded));
 
-            // 5. HASH AFTER DOWNLOAD
             var hash2 = _hash.ComputeHash(downloaded);
 
-            // 6. RESULT OBJECT
-            var result = new FileTransferResult
+            return new FileTransferResult
             {
-                FileSizeBytes = fileSizeBytes,
-                SizeKb = (int)(fileSizeBytes / 1024.0),
-                FileType = Path.GetExtension(filePath),
+                FileSizeBytes = sizeBytes,
+                SizeKb = (int)(sizeBytes / 1024.0),
+                FileType = _source.GetFileType(localPath),
 
-                UploadTime = upload.ms,
-                DownloadTime = download.ms,
+                UploadTime = upload,
+                DownloadTime = download,
 
-                UploadBytesPerSecond = _calculator.CalculateBytesPerSecond(fileSizeBytes, upload.ms),
-                DownloadBytesPerSecond = _calculator.CalculateBytesPerSecond(fileSizeBytes, download.ms),
+                UploadBytesPerSecond = _calculator.CalculateBytesPerSecond(sizeBytes, upload),
+                DownloadBytesPerSecond = _calculator.CalculateBytesPerSecond(sizeBytes, download),
 
                 HashMatch = hash1 == hash2,
-                FilesMatch = _comparer.Compare(filePath, downloaded),
+                FilesMatch = _comparer.Compare(localPath, downloaded),
 
                 RemotePath = remotePath,
                 TimestampUtc = DateTime.UtcNow
             };
-
-            return result;
         }
 
-        #region private methods
-        private async Task<(long ms, double bytesPerSec)> MeasureAsync(Func<Task> action)
+        private async Task<long> MeasureUploadDownloadAsync(Func<Task> action)
         {
-            try
-            {
-                var sw = Stopwatch.StartNew();
-                await action();
-                sw.Stop();
-
-                return (sw.ElapsedMilliseconds, 0);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("ERROR during transfer:");
-                Console.WriteLine(ex.Message);
-                throw; // IMPORTANT so you see real failure
-            }
+            var sw = Stopwatch.StartNew();
+            await action();
+            sw.Stop();
+            return (sw.ElapsedMilliseconds);
         }
-        #endregion
     }
 }
