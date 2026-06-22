@@ -9,8 +9,6 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        Console.WriteLine("Integrity In Microsoft Graph App");
-
         // AUTH
         var authProvider = new GraphAuthenticator();
 

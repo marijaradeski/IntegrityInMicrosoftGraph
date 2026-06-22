@@ -25,23 +25,24 @@ namespace IntegrityInMicrosoftGraph.Core
             _comparer = comparer;
         }
 
-        public async Task<FileTransferResult> Run(int sizeKb, FileType fileType)
+        public async Task<FileTransferResult> Run(string filePath, int size)
         {
             string original = "original.bin";
             string downloaded = "downloaded.bin";
-            string remotePath = $"test/{fileType}_{sizeKb}.bin";
+            string fileName = Path.GetFileName(filePath);
+            string remotePath = $"test/{fileName}";
 
-            // 1. CREATE FILE
+            //// 1. CREATE FILE
             _files.CreateFile(original, sizeKb, fileType);
 
-            long fileSizeBytes = new FileInfo(original).Length;
+            long fileSizeBytes = new FileInfo(filePath).Length;
 
             // 2. HASH BEFORE UPLOAD
-            var hash1 = _hash.ComputeHash(original);
+            var hash1 = _hash.ComputeHash(filePath);
 
             // 3. UPLOAD
             var upload = await MeasureAsync(() =>
-                _graph.UploadAsync(original, remotePath));
+                _graph.UploadAsync(filePath, remotePath));
 
             // 4. DOWNLOAD
             var download = await MeasureAsync(() =>
@@ -53,9 +54,9 @@ namespace IntegrityInMicrosoftGraph.Core
             // 6. RESULT OBJECT
             var result = new FileTransferResult
             {
-                SizeKb = sizeKb,
-                FileType = fileType.ToString(),
                 FileSizeBytes = fileSizeBytes,
+                SizeKb = (int)(fileSizeBytes / 1024.0),
+                FileType = Path.GetExtension(filePath),
 
                 UploadTime = upload.ms,
                 DownloadTime = download.ms,
@@ -64,7 +65,7 @@ namespace IntegrityInMicrosoftGraph.Core
                 DownloadBytesPerSecond = _calculator.CalculateBytesPerSecond(fileSizeBytes, download.ms),
 
                 HashMatch = hash1 == hash2,
-                FilesMatch = _comparer.Compare(original, downloaded),
+                FilesMatch = _comparer.Compare(filePath, downloaded),
 
                 RemotePath = remotePath,
                 TimestampUtc = DateTime.UtcNow
@@ -76,11 +77,20 @@ namespace IntegrityInMicrosoftGraph.Core
         #region private methods
         private async Task<(long ms, double bytesPerSec)> MeasureAsync(Func<Task> action)
         {
-            var sw = Stopwatch.StartNew();
-            await action();
-            sw.Stop();
+            try
+            {
+                var sw = Stopwatch.StartNew();
+                await action();
+                sw.Stop();
 
-            return (sw.ElapsedMilliseconds, 0);
+                return (sw.ElapsedMilliseconds, 0);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR during transfer:");
+                Console.WriteLine(ex.Message);
+                throw; // IMPORTANT so you see real failure
+            }
         }
         #endregion
     }

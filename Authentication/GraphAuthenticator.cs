@@ -42,7 +42,7 @@ namespace IntegrityInMicrosoftGraph.Authentication
 
         public async Task AuthenticateRequestAsync(
             RequestInformation request,
-            Dictionary<string, object> additionalAuthenticationContext,
+            Dictionary<string, object>? additionalAuthenticationContext,
             CancellationToken cancellationToken)
         {
             var token = await GetTokenAsync();

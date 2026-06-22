@@ -23,48 +23,25 @@ namespace IntegrityInMicrosoftGraph.ConsoleLogic
         {
             Console.WriteLine("Integrity Microsoft Graph Application");
 
-            int sizeKb = ReadFileSize();
-            FileType fileType = ReadFileType();
+            //var sizeKb = ReadFileSize();
+            var path = ReadFileType();
 
-            var result = await _runner.Run(sizeKb, fileType);
+            var result = await _runner.Run(path);
             PrintResults(result);
         }
 
-        private int ReadFileSize()
+        private string ReadFileType()
         {
             while (true)
-            {
-                Console.Write("Enter file size (KB): ");
+             {
+                Console.Write("Enter full file path: ");
+                var path = Console.ReadLine();
 
-                if (int.TryParse(Console.ReadLine(), out int sizeKb) && sizeKb > 0)
-                {
-                    return sizeKb;
-                }
+                if (!string.IsNullOrWhiteSpace(path) && File.Exists(path))
+                    return path;
 
-                Console.WriteLine("Please enter a valid positive number.");
-            }
-        }
-
-        private FileType ReadFileType()
-        {
-            while (true)
-            {
-                Console.WriteLine("File types:");
-
-                foreach (var type in Enum.GetValues<FileType>())
-                {
-                    Console.WriteLine($"- {type}");
-                }
-
-                Console.Write("Select file type: ");
-
-                if (Enum.TryParse<FileType>(Console.ReadLine(),true, out var fileType))
-                {
-                    return fileType;
-                }
-
-                Console.WriteLine("Invalid file type.");
-            }
+                Console.WriteLine("File not found. Try again.");
+             }
         }
 
         private void PrintResults(FileTransferResult result)
